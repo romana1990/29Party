@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="la">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Isidorus - IV. De Litteris Latinis</title>
+  <style>
+    @font-face {
+      font-family: "Junicode";
+      src: url("Junicode-Regular.ttf") format("truetype");
+    }
+    body {
+      background: #f9f6f1 url("parchment-texture.jpg") repeat;
+      font-family: "Junicode", serif;
+      margin: 0;
+      padding: 0;
+      color: #3b2f2f;
+      line-height: 1.6;
+    }
+    header {
+      background: #8a6d3b;
+      color: #f9f6f1;
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.5rem;
+      font-family: "Junicode", serif;
+      letter-spacing: 0.1em;
+      border-bottom: 3px solid #5a4a21;
+    }
+    .alphabet-ribbon {
+      background: linear-gradient(90deg, #5a4a21 0%, #8a6d3b 50%, #5a4a21 100%);
+      color: #fff3c1;
+      font-family: monospace;
+      text-align: center;
+      font-size: 1.2rem;
+      padding: 0.75rem 0;
+      letter-spacing: 0.25em;
+      user-select: none;
+      border-top: 2px solid #c2a863;
+      border-bottom: 3px solid #8a6d3b;
+      text-shadow: 0 0 8px rgba(255, 230, 150, 0.6);
+    }
+    .alphabet-ribbon span.cipher {
+      color: #d94f4f;
+      font-weight: bold;
+    }
+    main {
+      max-width: 720px;
+      margin: 2rem auto;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 2rem 3rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      border-radius: 8px;
+    }
+    h1 {
+      font-family: "Junicode", serif;
+      font-size: 2rem;
+      margin-bottom: 0.2rem;
+      letter-spacing: 0.05em;
+      color: #5a4a21;
+    }
+    h2 {
+      font-family: "Junicode", serif;
+      font-weight: normal;
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 2rem;
+      color: #7a6a3b;
+      font-style: italic;
+    }
+    .folio p {
+      margin-bottom: 1.2rem;
+      font-size: 1.1rem;
+      text-indent: 2em;
+    }
+    .folio p strong {
+      font-weight: bold;
+      font-family: "Junicode", serif;
+    }
+    .mark {
+      color: #6b5a3c;
+      font-weight: 600;
+      text-decoration: underline;
+      text-decoration-color: #7a6a3b;
+      text-decoration-thickness: 1.5px;
+      font-family: "Junicode", serif;
+    }
+    .key {
+      color: #7a5d2b;
+      font-weight: 700;
+      background: rgba(255, 230, 150, 0.25);
+      border-bottom: 2px dotted #a08b52;
+      padding: 0 2px;
+    }
+    em {
+      font-style: italic;
+    }
+    footer {
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #5a4a21;
+      margin: 3rem 0 1rem 0;
+      user-select: none;
+    }
+    .hints {
+      max-width: 720px;
+      margin: 1rem auto;
+      font-family: monospace;
+      font-size: 0.9rem;
+      background: #f0e6d2;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      color: #5a4a21;
+      border: 1px solid #d9cba7;
+      user-select: none;
+    }
+    .password-entry {
+      margin-top: 2rem;
+      text-align: center;
+      font-family: "Junicode", serif;
+      color: #5a4a21;
+      background: #fbf7e9;
+      border: 1px solid #d9cba7;
+      border-radius: 6px;
+      padding: 1rem 1.5rem;
+      box-shadow: inset 0 0 5px #d9cba7;
+    }
+    .password-entry p {
+      margin: 0 0 0.5rem 0;
+      font-style: italic;
+      font-size: 1rem;
+    }
+    .password-entry input[type="text"] {
+      font-family: monospace;
+      font-size: 1rem;
+      padding: 0.3rem 0.5rem;
+      border: 1px solid #a08b52;
+      border-radius: 4px;
+      width: 120px;
+      text-align: center;
+      background: #f9f6f1;
+      color: #5a4a21;
+      margin-right: 0.5rem;
+    }
+    .password-entry button {
+      font-family: monospace;
+      font-size: 1.2rem;
+      background: #8a6d3b;
+      color: #f9f6f1;
+      border: none;
+      border-radius: 4px;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+    }
+    .password-entry button:hover {
+      background-color: #7a5d2b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    ISIDORUS HISPALENSIS - DE LITTERIS LATINIS
+  </header>
+  <nav class="alphabet-ribbon" aria-label="Alphabet ribbon">
+    A B C D E F G H I L M N O P R S T U X Y Z
+    <div style="font-family:'Junicode',serif;font-style:italic;font-size:0.9rem;color:#f6e9b2;margin-top:0.3rem;">
+      Abecedarium vetustum clavis erit.
+    </div>
+  </nav>
+  <main>
+    <h1>IV. DE LITTERIS LATINIS.</h1>
+    <h2>Ex Isidoro Hispalensi, Origines, cap. 4</h2>
+    <div class="folio">
+      <p>
+        [1] <span class="mark">T</span>radidit Carmentis nympha prima Italis litteras. Carmentis autem dicta, quia carminibus <em>futura</em> canebat. Ceterum proprie vocata [est] Nicostrate. Litterae autem aut communes sunt aut liberales.
+      </p>
+      <p>
+        [2] Communes dictae, quia <span class="mark">m</span>ulti eas in commune utuntur, ut scribere et legere. Liberales, quia eas tantum illi noverunt, qui libros conscribunt recteque loquendi dictandique rationem noverunt.
+      </p>
+      <p>
+        [3] Litterarum duplex modus est: dividuntur enim principaliter in duas partes, in vocales et consonantes. Vocales sunt quae directo hiatu <span class="mark">f</span>aucium sine ulla conlisione varie emittuntur. Et dictae vocales, quod per se vocem inpleant, et per se syllabam faciant nulla adhaerente consonante. Consonantes sunt, quae diverso motu linguae vel inpressione labrorum efficiuntur. Et vocatae consonantes quia per se non sonant, sed iunctis vocalibus consonant.
+      </p>
+      <p>
+        [4] Haec in duabus partibus dividuntur: in semivocalibus et in mutis. Semivocales dictas eo, quod quiddam semis de vocalibus habeant. Ab E quippe vocali incipiunt, et desinunt in naturalem sonum [ut F, L, M et ceterae]. Mutae autem dictae, quia nisi subiectis sibi vocalibus nequaquam erumpunt. Si enim eis extremum vocalis detraxeris sonum, inclusum litterae murmur sonabit [ut B, G, D et ceterae]. Vocales autem et semivocales et mutas a veteribus sonas et semisonas et insonas dictas.
+      </p>
+      <p>
+        [5] Inter vocales autem I et U apud Grammaticos varias habent significationes. [6] Nam modo vocales sunt, modo semivocales, modo mediae sunt. Vocales ideo sunt, quia solae positae syllabas faciunt et aliis consonantibus coniunguntur. Consonantes ideo habentur, quia interdum habent post se vocales in hisdem syllabis constitutas, ut "Ianus" "vates" et habentur pro consonantibus. [7] Mediae [autem] idcirco dicuntur, quoniam naturaliter solae medium sonum habent, ut "<span class="key">Troia</span>" Geminatur enim ibi sonus eius.
+      </p>
+      <p>
+        [8] V quoque littera proinde interdum nihil est, quia alicubi nec vocalis nec consonans est, ut quis. Vocalis enim non est, quia I sequitur; consonans non est, quia Q praecedit. Ideoque quando nec vocalis, nec consonans est, sine dubio nihil est. Eadem et digammon a Graecis vocatur, quando sibimet aliisque vocalibus iungitur: quae ideo digammon dicitur, quia duplex est instar F litterae, quac duplicem Gammam habet, ad cuius similitudinem coniunctas vocales digammon appellari grammatici voluerunt, ut "votum" "virgo"
+      </p>
+      <p>
+        [9] Inter semivocales autem quaedam liquidae dicuntur propterea, quia interdum in una syllaba postpositae aliis consonantibus deficiunt et a metro excluduntur. Ex quibus duae apud Latinos liquescunt L et R, ut "fragor" "flatus" Reliquae M et N apud Graecos liquescunt: ut "Mnestheus"
+      </p>
+      <p>
+        [10] Decem et septem autem Latinis litteris vetus scriptura constabat. Vnde et legitimae nominantur illa ratione, scilicet vel quod ab E vocali incipiunt et in mutum sonum desinunt, ut sunt consonantes, vel quod a suo sono incipiunt et in vocalem E desinunt, ut sunt mutae [et sunt A. B. C. D. E. F. G. I. L. M. N. O. P. R. S. T. et U].
+      </p>
+      <p>
+        [11] H autem littera pro sola aspiratione adiecta postea est. Vnde et a plerisque aspiratio putatur esse, non littera, quae proinde aspirationis nota dicitur, quia vocem elevat. Aspiratio enim est sonus uberius elatus, cuius contraria est prosodia, sonus aequaliter flexus.
+      </p>
+      <p>
+        [12] K litteram Salvius ludimagister pri[m]us Latinis adiecit, ut in sono discrimen faceret duarum litterarum C et Q; quae ideo supervacua dicitur, quia exceptis "Kalendis" superflua iudicatur: per C enim universa exprimimus.
+      </p>
+      <p>
+        [13] Q litteram nec Graeci resonant, nec Hebraei. Exceptis enim Latinis hanc nulla alia lingua habet. Haec prius non erat. Vnde et ipsa supervacua est vocata quia per C cuncta veteres scripserunt.
+      </p>
+      <p>
+        [14] X littera usque ad Augusti tempus nondum apud Latinos erat, sed pro ea C et S scribebant, unde et duplex vocatur, quia pro C et S ponitur, unde et ex eisdem litteris conpositum nomen habet.
+      </p>
+      <p>
+        [15] A Graecis [autem] duas litteras mutuavit Latinitas, Y et <span class="mark">Z</span>, propter nomina scilicet Graeca, et haec apud Romanos usque ad Augusti tempus non scribebantur, sed pro Z duas S ponebant, ut "hilarissat"; pro Y vero I scribebant.
+      </p>
+      <p>
+        [16] Vnicuique autem litterae tria accidunt: nomen, quomodo vocetur; figura, quo caractere signetur; potestas, quae vocalis, quae consonans habeatur. A quibusdam et ordo adicitur, id est quae praecedit, quae sequitur, ut A prior sit, subsequens B. A autem in omnibus gentibus ideo prior est litterarum, pro eo quod ipsa prior nascentibus vocem aperiat. (Hic lege: p<span class="mark">r</span>ior.)
+      </p>
+      <p>
+        [17] Nomina autem litterarum gentes ex sono propriae linguae dederunt notatis oris sonis atque discretis. Nam postquam eas animadverterunt, et nomina illis et figuras inposuerunt: figuras autem partim ex placito, partim ex sono litterarum formaverunt: ut puta I et O, quarum uni sicut exilis sonus, ita <span class="mark">t</span>enuis virgula, alterius pinguis sonus, sicut et plena figura. Potestatem autem natura dedit, voluntas ordinem et apicem.
+      </p>
+      <p>
+        [18] Inter figuras litterarum et apicem veteres dixerunt, apicem dictum propter quod longe sit a pedibus, et in cacumine litterae adponatur. Est enim linea iacens super litteram aequaliter ducta. [Figura autem, qua tota littera scribitur.]
+      </p>
+    </div>
+    <div class="password-entry">
+      <p><em>Ad pergam ad paginam sequentem, inscribe verbum secretum.</em></p>
+      <input type="text" id="passcode" placeholder="••••••" />
+      <button onclick="checkPasscode()">✶</button>
+      <p id="message" style="font-family:monospace;font-size:0.9rem;color:#5a4a21;"></p>
+    </div>
+    <script>
+      function checkPasscode() {
+        const code = document.getElementById('passcode').value.trim().toUpperCase();
+        if (code === 'AURORA') {
+          window.location.href = '/aurora';
+        } else {
+          document.getElementById('message').textContent = 'Verbum falsum est.';
+        }
+      }
+    </script>
+  </main>
+  <section class="hints" aria-label="Hints for Vigenere">
+    <figure style="display:flex; align-items:center; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-top:0.75rem;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Vigenere.jpg" alt="Blaise de Vigenère portrait" style="height:110px; border:1px solid #a08b52; border-radius:4px; box-shadow:0 0 5px rgba(0,0,0,0.3);" />
+      <figcaption style="font-family:'Junicode',serif; font-style:italic; color:#5a4a21; max-width:420px; text-align:left;">
+        « Blaise de Vigenère said: “Utilisez l’ancien alphabet (ci-dessus).” »
+      </figcaption>
+    </figure>
+  </section>
+  <footer>
+    &copy; 2025 DV
+  </footer>
+  <!-- meta-fragment: isidorvs.html version 1.2 -->
+</body>
+</html>

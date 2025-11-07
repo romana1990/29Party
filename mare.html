@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MARE – Voices of the Sea</title>
+  <meta name="description" content="Arrange maritime signal flags in the order spoken in the audio." />
+  <!-- Minimal reset + Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Fallback styling if any flag image is missing */
+    .flag-fallback {
+      display: grid; place-items: center; font-weight: 700; letter-spacing: 0.1em;
+      background: linear-gradient(135deg, #111 0%, #1e293b 100%);
+      color: #e2e8f0;
+    }
+    .drop-slot[data-filled="true"] { outline: 2px dashed transparent; }
+    .drop-slot[data-filled="false"] { outline: 2px dashed #334155; }
+    /* Subtle success shimmer */
+    @keyframes shimmer { from {background-position: 0% 0%} to {background-position: 200% 0%} }
+    .success-shimmer { background: linear-gradient(90deg, rgba(34,197,94,.1), rgba(34,197,94,.25), rgba(34,197,94,.1)); background-size: 200% 100%; animation: shimmer 2.2s linear infinite; }
+  </style>
+</head>
+<body class="min-h-screen bg-neutral-950 text-slate-100 selection:bg-sky-600/40">
+  <!-- Hidden meta-fragment for the grand puzzle layer -->
+  <!-- COLOR: BLUE -->
+
+  <main class="mx-auto max-w-5xl px-4 py-8 md:py-12">
+    <header class="flex items-start justify-between gap-4">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight">MARE <span class="block text-base md:text-lg text-slate-400/80">(Voces Maris)</span></h1>
+        <p class="mt-2 text-slate-400">Audi. Intellege. Ordina vexilla.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnPlay" class="rounded-2xl px-4 py-2 bg-sky-700/60 hover:bg-sky-600 transition">▶︎ Play</button>
+        <button id="btnReset" class="rounded-2xl px-4 py-2 bg-slate-800 hover:bg-slate-700 transition">↺ Reset</button>
+      </div>
+    </header>
+
+    <section aria-label="Target sequence" class="mt-6">
+      <h2 class="text-lg font-medium text-slate-300 mb-3">Sequence</h2>
+      <div id="slots" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>
+      <p id="progress" class="mt-2 text-sm text-slate-400"></p>
+    </section>
+
+    <audio id="vocesAudio" preload="auto" class="hidden"></audio>
+
+    <section aria-label="Available flags" class="mt-8">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-medium text-slate-300"></h2>
+      </div>
+      <div id="flags" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2"></div>
+    </section>
+
+    <section id="success" class="mt-10 hidden">
+      <div class="success-shimmer rounded-2xl border border-green-900/60 bg-green-950/30 p-5">
+        <h3 class="text-2xl font-semibold">GOOD JOB!</h3>
+        <p class="mt-2 text-slate-300">You have arranged the sea’s voices. Proceed.</p>
+        <div class="mt-4 flex items-center gap-3">
+          <a id="nextLink" class="rounded-2xl px-4 py-2 bg-emerald-600 hover:bg-emerald-500 transition text-white" href="#">Next step</a>
+          <button id="btnCopyPass" class="rounded-2xl px-4 py-2 bg-slate-800 hover:bg-slate-700 transition">Copy passphrase</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-16 text-center text-xs text-slate-600">Mare</footer>
+  </main>
+
+  <script>
+ 
+    const CONFIG = {
+      // Path to the audio file to play
+      audioSrc: "audio/SIVALC.mp3", 
+
+      targetSequence: "SIVALC",
+      // Where to send players on success
+      nextUrl: "/29/isidorvs.html", // set this when your next step is ready
+      // Optional: a passphrase to show/copy on success (can be blank)
+      successPassphrase: "GOOD JOB!",
+      // Path to the folder containing flag images
+      flagImageBasePath: "flags"
+    };
+
+    
+    const NATO = {
+    };
+
+
+    const audio = document.getElementById('vocesAudio');
+    const btnPlay = document.getElementById('btnPlay');
+    const btnReset = document.getElementById('btnReset');
+    const flagsGrid = document.getElementById('flags');
+    const slotsGrid = document.getElementById('slots');
+    const progress = document.getElementById('progress');
+    const success = document.getElementById('success');
+    const nextLink = document.getElementById('nextLink');
+    const btnCopyPass = document.getElementById('btnCopyPass');
+
+    // Load audio
+    audio.src = CONFIG.audioSrc;
+
+    // Create drop slots based on target length
+    const TARGET = CONFIG.targetSequence.toUpperCase().replace(/[^A-Z]/g, '').split('');
+    nextLink.href = CONFIG.nextUrl || '#';
+
+    function renderSlots() {
+      slotsGrid.innerHTML = '';
+      TARGET.forEach((_, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'drop-slot aspect-square rounded-xl bg-slate-900/60 border border-slate-800 grid place-items-center text-slate-500 text-xs select-none';
+        slot.dataset.index = String(i);
+        slot.dataset.filled = 'false';
+        slot.textContent = i + 1;
+        slot.addEventListener('dragover', ev => ev.preventDefault());
+        slot.addEventListener('drop', onDropToSlot);
+        slot.addEventListener('click', () => removeFromSlot(slot));
+        slotsGrid.appendChild(slot);
+      });
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const filled = Array.from(slotsGrid.children).filter(n => n.dataset.filled === 'true').length;
+      progress.textContent = `${filled}/${TARGET.length} placed`;
+    }
+
+    function onDropToSlot(ev) {
+      ev.preventDefault();
+      const letter = ev.dataTransfer.getData('text/plain');
+      placeLetter(this, letter);
+    }
+
+    function placeLetter(slot, letter) {
+      if (slot.dataset.filled === 'true') return; // already filled
+      const tile = makeMiniTile(letter);
+      slot.innerHTML = '';
+      slot.appendChild(tile);
+      slot.dataset.letter = letter;
+      slot.dataset.filled = 'true';
+      updateProgress();
+      checkSolution();
+    }
+
+    function removeFromSlot(slot) {
+      if (slot.dataset.filled !== 'true') return;
+      slot.innerHTML = slot.dataset.index;
+      slot.dataset.filled = 'false';
+      slot.dataset.letter = '';
+      updateProgress();
+    }
+
+    function makeMiniTile(letter) {
+      const container = document.createElement('div');
+      container.className = 'w-full h-full overflow-hidden rounded-lg bg-slate-900/80';
+      const img = document.createElement('img');
+      img.alt = `Flag ${letter}`;
+      img.src = `${CONFIG.flagImageBasePath}/${letter}.png`;
+      img.className = 'w-full h-full object-cover';
+      img.onerror = () => {
+        container.innerHTML = '';
+        const fallback = flagFallback(letter);
+        fallback.classList.add('w-full', 'h-full');
+        container.appendChild(fallback);
+      };
+      container.appendChild(img);
+      return container;
+    }
+
+    // Build A–Z flag tiles
+    const A2Z = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+
+    function buildFlagTile(letter) {
+      const wrap = document.createElement('button');
+      wrap.type = 'button';
+      wrap.className = 'group relative overflow-hidden rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 focus:outline-none focus:ring-1 focus:ring-sky-600';
+      wrap.setAttribute('draggable', 'true');
+      wrap.dataset.letter = letter;
+
+      // Click-to-append behavior (mobile-friendly)
+      wrap.addEventListener('click', () => {
+        const firstEmpty = Array.from(slotsGrid.children).find(n => n.dataset.filled === 'false');
+        if (firstEmpty) placeLetter(firstEmpty, letter);
+      });
+
+      // Drag behavior
+      wrap.addEventListener('dragstart', (ev) => {
+        ev.dataTransfer.setData('text/plain', letter);
+      });
+
+      // Flag image (provide your own PNGs)
+      const img = document.createElement('img');
+      img.alt = `Flag ${letter}`;
+      img.src = `${CONFIG.flagImageBasePath}/${letter}.png`;
+      img.className = 'w-full aspect-square object-cover';
+      img.onerror = () => {
+        // Fallback visual if image missing
+        img.replaceWith(flagFallback(letter));
+      };
+
+      const label = document.createElement('div');
+      label.className = 'absolute bottom-1 right-1 text-[10px] px-1.5 py-0.5 rounded-md bg-black/60 text-slate-100 tracking-widest opacity-80 group-hover:opacity-100';
+      //label.textContent = letter;
+
+      const caption = document.createElement('div');
+      caption.className = 'px-2 py-1 text-center text-xs text-slate-400 group-hover:text-slate-300';
+      caption.textContent = NATO[letter];
+
+      const tile = document.createElement('div');
+      tile.appendChild(img);
+      tile.appendChild(label);
+
+      wrap.appendChild(tile);
+      wrap.appendChild(caption);
+      return wrap;
+    }
+
+    function flagFallback(letter) {
+      const div = document.createElement('div');
+      div.className = 'flag-fallback w-full aspect-square rounded-xl border border-slate-700 text-2xl';
+      div.textContent = letter;
+      return div;
+    }
+
+    function renderFlags() {
+      flagsGrid.innerHTML = '';
+      const shuffled = [...A2Z];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      shuffled.forEach(ch => flagsGrid.appendChild(buildFlagTile(ch)));
+    }
+
+    // Check correctness
+    function checkSolution() {
+      const letters = Array.from(slotsGrid.children).map(n => n.dataset.letter || '?');
+      if (letters.includes('?')) return; // not filled yet
+      const correct = letters.join('') === TARGET.join('');
+      if (correct) onSuccess();
+    }
+
+    function onSuccess() {
+      success.classList.remove('hidden');
+      if (CONFIG.successPassphrase) {
+        btnCopyPass.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(CONFIG.successPassphrase);
+            btnCopyPass.textContent = 'Copied!';
+            setTimeout(() => btnCopyPass.textContent = 'Copy passphrase', 1400);
+          } catch (_) {}
+        }, { once: true });
+      } else {
+        btnCopyPass.classList.add('hidden');
+      }
+      // Auto-scroll to success
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Controls
+    btnPlay.addEventListener('click', () => {
+      if (audio.paused) { audio.currentTime = 0; audio.play(); btnPlay.textContent = '❚❚ Pause'; }
+      else { audio.pause(); btnPlay.textContent = '▶︎ Play'; }
+    });
+    audio.addEventListener('ended', () => btnPlay.textContent = '▶︎ Play');
+
+    btnReset.addEventListener('click', () => {
+      Array.from(slotsGrid.children).forEach(removeFromSlot);
+      success.classList.add('hidden');
+      btnPlay.textContent = '▶︎ Play';
+      audio.pause(); audio.currentTime = 0;
+    });
+
+    // Init
+    renderSlots();
+    renderFlags();
+  </script>
+</body>
+</html>
