@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Dancing Men Cipher</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+    body {
+      background: #f6f1e7 url('https://upload.wikimedia.org/wikipedia/commons/8/84/Old_paper_texture_background.jpg') repeat;
+      color: #2b1d0e;
+      font-family: 'Special Elite', serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      text-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      font-style: italic;
+      color: #5a4a21;
+    }
+    .cipher-note {
+      max-width: 700px;
+      background: rgba(255,255,255,0.85);
+      padding: 2rem;
+      border: 2px solid #b6a67a;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+    .cipher-note p {
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+    .input-area {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .letter-inputs {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+    .letter {
+      width: clamp(2.2rem, 9vw, 2.8rem);
+      height: clamp(2.6rem, 10vw, 3rem);
+      line-height: 1;
+      text-align: center;
+      font-size: clamp(1.1rem, 5vw, 1.4rem);
+      font-family: 'Special Elite', serif;
+      border: 1px solid #5a4a21;
+      background: #f9f6f1;
+      border-radius: 6px;
+      box-shadow: inset 0 0 3px rgba(0,0,0,0.1);
+      text-transform: uppercase;
+    }
+    button {
+      font-family: 'Special Elite', serif;
+      font-size: 1.2rem;
+      margin-left: 0.5rem;
+      margin-top: 1rem;
+      background: #5a4a21;
+      color: #f9f6f1;
+      border: none;
+      border-radius: 4px;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .input-area button {
+      display: inline-block;
+      margin-left: 0.5rem;
+      margin-top: 0.9rem;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+    }
+    button:hover {
+      background: #7a5d2b;
+    }
+    .message {
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #5a4a21;
+      font-style: italic;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #7a6a3b;
+    }
+    @media (max-width: 520px) {
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1rem; }
+      .cipher-note { padding: 1.2rem; margin: 0 0.6rem; }
+      .cipher-note p { font-size: 1rem; }
+      footer { margin-top: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cipher-note">
+    <h1>The Adventure of the Dancing Men</h1>
+    <h2>From the private notes of Sherlock Holmes</h2>
+    <p>Faintly drawn upon the painting known as <a href="" target="_blank"><em>The Night Watch</em></a> are strange stick-figures - the <strong>Dancing Men</strong>. Their positions, repeated and varied, conceal a message. One single word.</p>
+    <p>Translate their movements into letters, then enter your result below. Each letter must be true, for even one misstep will lead astray.</p>
+    <div class="input-area">
+      <div class="letter-inputs">
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+        <input type="text" maxlength="1" class="letter" />
+      </div>
+      <button onclick="checkAnswer()">Submit</button>
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+  <footer>© 2025 DV - A Study in Codes</footer>
+  <script>
+    const boxes = Array.from(document.querySelectorAll('.letter'));
+
+    // Focus the first box on load
+    if (boxes[0]) boxes[0].focus();
+
+    // Handle typing, navigation, and sanitization
+    boxes.forEach((box, idx) => {
+      box.setAttribute('inputmode', 'latin');
+      box.setAttribute('autocomplete', 'off');
+      box.setAttribute('autocapitalize', 'characters');
+      box.addEventListener('input', (e) => {
+        const v = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+        e.target.value = v.slice(0,1);
+        if (v && boxes[idx+1]) boxes[idx+1].focus();
+      });
+      box.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && boxes[idx-1]) {
+          e.preventDefault();
+          boxes[idx-1].focus();
+          boxes[idx-1].value = '';
+        }
+        if (e.key === 'ArrowLeft' && boxes[idx-1]) boxes[idx-1].focus();
+        if (e.key === 'ArrowRight' && boxes[idx+1]) boxes[idx+1].focus();
+        if (e.key === 'Enter') checkAnswer();
+      });
+    });
+
+    // Paste support: allow pasting the entire word across boxes
+    boxes[0].addEventListener('paste', (e) => {
+      e.preventDefault();
+      const txt = (e.clipboardData || window.clipboardData).getData('text')
+        .toUpperCase().replace(/[^A-Z]/g, '').slice(0, boxes.length);
+      boxes.forEach((b, i) => { b.value = txt[i] || ''; });
+      if (txt.length === boxes.length) checkAnswer();
+    });
+
+    function checkAnswer() {
+      const letters = Array.from(document.querySelectorAll('.letter'))
+        .map(i => (i.value || '').trim().toUpperCase())
+        .join('');
+      const message = document.getElementById('message');
+      if (letters === 'ELEMENTARY') {
+        message.style.color = '#2b1d0e';
+        message.textContent = 'Correct! Proceed to the final revelation...';
+        setTimeout(() => window.location.href = '/final.html', 1200);
+      } else {
+        message.style.color = '#7a2b2b';
+        message.textContent = 'Incorrect deduction, my dear Watson.';
+      }
+    }
+  </script>
+</body>
+</html>
